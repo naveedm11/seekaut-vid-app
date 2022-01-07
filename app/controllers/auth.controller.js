@@ -31,18 +31,17 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
-  console.log(req.body);
   
   const { firstName, lastName, username, email, phone, gender, dob, bio, nationality, password, role } = req.body
   
-  if (!username) {
-    return res.status(500).send({ status: "failed", message: "Please provide user name" })
-  }
-
   if (!email) {
     return res.status(500).send({ status: "failed", message: "Please provide email" })
   }
-  
+
+  if (!password) {
+    return res.status(500).send({ status: "failed", message: "Please set password" })
+  }
+
   let fullName = req.body.firstName + " " + req.body.lastName
   const user = new User({
     firstName: req.body.firstName,
@@ -61,6 +60,7 @@ exports.signup = (req, res) => {
 
   if (req.file) {
     try {
+      console.log("file is uploaded");
       let params = uploadParams;
 
       params.Key = Date.now() + "--" + req.file.originalname;
@@ -128,6 +128,17 @@ exports.signup = (req, res) => {
     }
   }
 
+  else {
+    console.log("file is not uploaded");
+    user.save(err => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+
+      res.send({ message: "User was registered successfully!" });
+    });
+  }
 };
 
 exports.signin = (req, res) => {
