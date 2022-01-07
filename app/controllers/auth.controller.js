@@ -35,12 +35,6 @@ exports.signup = (req, res) => {
   
   const { firstName, lastName, username, email, phone, gender, dob, bio, nationality, password, role } = req.body
   
-  if (!firstName) {
-    return res.status(500).send({ status: "failed", message: "Please provide first name" })
-  }
-  if (!lastName) {
-    return res.status(500).send({ status: "failed", message: "Please provide last name" })
-  }
   if (!username) {
     return res.status(500).send({ status: "failed", message: "Please provide user name" })
   }
@@ -52,23 +46,8 @@ exports.signup = (req, res) => {
     return res.status(500).send({ status: "failed", message: "Please provide phone number" })
   }
 
-  if (!gender) {
-    return res.status(500).send({ status: "failed", message: "Please provide gender nformation" })
-  }
-  if (!dob) {
-    return res.status(500).send({ status: "failed", message: "Please provide your date of birth" })
-  }
-  if (!bio) {
-    return res.status(500).send({ status: "failed", message: "Please provide your bio information" })
-  }
-  if (!nationality) {
-    return res.status(500).send({ status: "failed", message: "Please provide your nationality" })
-  }
   if (!password) {
     return res.status(500).send({ status: "failed", message: "Please password" })
-  }
-  if (!role) {
-    return res.status(500).send({ status: "failed", message: "Please user's role" })
   }
 
   let fullName = req.body.firstName + " " + req.body.lastName
