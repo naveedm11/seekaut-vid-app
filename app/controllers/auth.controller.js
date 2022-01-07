@@ -42,14 +42,7 @@ exports.signup = (req, res) => {
   if (!email) {
     return res.status(500).send({ status: "failed", message: "Please provide email" })
   }
-  if (!phone) {
-    return res.status(500).send({ status: "failed", message: "Please provide phone number" })
-  }
-
-  if (!password) {
-    return res.status(500).send({ status: "failed", message: "Please password" })
-  }
-
+  
   let fullName = req.body.firstName + " " + req.body.lastName
   const user = new User({
     firstName: req.body.firstName,
