@@ -35,11 +35,11 @@ exports.signup = (req, res) => {
   const { firstName, lastName, username, email, phone, gender, dob, bio, nationality, password, role } = req.body
   
   if (!email) {
-    return res.status(500).send({ status: "failed", message: "Please provide email" })
+    return res.status(500).send({ status: false , message: "Please provide email" })
   }
 
   if (!password) {
-    return res.status(500).send({ status: "failed", message: "Please set password" })
+    return res.status(500).send({ status: false , message: "Please set password" })
   }
 
   let fullName = req.body.firstName + " " + req.body.lastName
@@ -97,7 +97,7 @@ exports.signup = (req, res) => {
                     return;
                   }
 
-                  res.status(200).send({ status: "seccess", message: "User was registered successfully!" });
+                  res.status(200).send({ status: true, message: "User was registered successfully!" });
                 });
               }
             );
@@ -115,7 +115,7 @@ exports.signup = (req, res) => {
                   return;
                 }
 
-                res.send({ status: "success", message: "User was registered successfully!" });
+                res.send({ status: true, message: "User was registered successfully!" });
               });
             });
           }
@@ -124,7 +124,7 @@ exports.signup = (req, res) => {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).send({ status: "failed", error: error });
+      res.status(500).send({ status: false , error: error });
     }
   }
 
@@ -136,7 +136,7 @@ exports.signup = (req, res) => {
         return;
       }
 
-      res.status(200).send({ status: "success", message: "User was registered successfully!" });
+      res.status(200).send({ status: true , message: "User was registered successfully!" });
     });
   }
 };
