@@ -76,6 +76,7 @@ db.once("open", function () {
   console.log("Connected successfully");
   initial();
 });
+
 app.use("/api/v1", Router);
 app.use("/api/auth",authRoute);
 const PORT = process.env.PORT || 3005

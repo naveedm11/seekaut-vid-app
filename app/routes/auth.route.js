@@ -12,4 +12,6 @@ app.post(
 );
 
 app.post("/signin", controller.signin);
+
+app.post("/update/:id", controller.updateUser);
 module.exports = app;

@@ -6,6 +6,7 @@ const S3 = require("aws-sdk/clients/s3");
 const AWS = require("aws-sdk");
 const wasabiEndpoint = new AWS.Endpoint("s3.eu-central-1.wasabisys.com ");
 
+const ObjectId = require('mongodb').ObjectId;
 const accessKeyId = "CW02H3YPJOCHACJRVG94";
 const secretAccessKey = "AeERvP8EjaTiSiHMtteAyyH0jYEUfMkSPBlmVD4H";
 
@@ -143,7 +144,7 @@ exports.signup = (req, res) => {
 
 exports.signin = (req, res) => {
   User.findOne({
-    username: req.body.username
+    email: req.body.email
   })
     .populate("roles", "-__v")
     .exec((err, user) => {
@@ -153,7 +154,7 @@ exports.signin = (req, res) => {
       }
 
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res.status(404).send({ status: false, message: "User Not found." });
       }
 
       var passwordIsValid = bcrypt.compareSync(
@@ -163,6 +164,7 @@ exports.signin = (req, res) => {
 
       if (!passwordIsValid) {
         return res.status(401).send({
+          status: false,
           accessToken: null,
           message: "Invalid Password!"
         });
@@ -187,9 +189,10 @@ exports.signin = (req, res) => {
     });
 };
 
+
 //update user
 exports.updateUser = async (req, res) => {
-  if (req.body.userId === req.params.id || req.body.isAdmin) {
+
     if (req.body.password) {
       try {
         const salt = await bcrypt.genSalt(10);
@@ -198,10 +201,11 @@ exports.updateUser = async (req, res) => {
         return res.status(500).json(err);
       }
     }
+
     try {
-      const user = await User.findByIdAndUpdate(req.params.id, {
-        $set: req.body,
-      });
+
+      const user = await User.findOneAndUpdate({ _id: ObjectId(req.params.id)}, {$set: req.body});
+
       if (req.body.hasOwnProperty('firstName') && req.body.hasOwnProperty('lastName')) {
         user.fullName = req.body.firstName + ' ' + req.body.lastName
       }
@@ -211,12 +215,15 @@ exports.updateUser = async (req, res) => {
       else if (req.body.hasOwnProperty('lastName')) {
         user.fullName = user.fullName.split(' ')[0] + ' ' + req.body.lastName
       }
-      await user.save()
-      res.status(200).json("Account has been updated");
-    } catch (err) {
+      await user.save();
+      console.log("user==>", user);
+
+      res.status(200).send({ status: true , message: "User is updated successfully!"});
+    } 
+    catch (err) {
       return res.status(500).json(err);
     }
-  } else {
-    return res.status(403).json("You can update only your account!");
-  }
+  // } else {
+  //   return res.status(403).json("You can update only your account!");
+  // }
 }
