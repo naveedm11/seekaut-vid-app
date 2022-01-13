@@ -204,12 +204,12 @@ exports.updateUser = async (req, res) => {
   }
 }
 
-if(req.body.onlyCheckMobile == true){
+if(req.body.onlyCheckMobile && req.body.onlyCheckMobile == true){
   const doesPhoneExists = await User.findOne({ $or: [{ 'phone': req.body.phone }] })
   if (doesPhoneExists) {
     return res.status(404).send({
       success: false,
-      message: 'Phone number already exists,Choose different phone number'
+      message: 'Phone number already exists, Choose different phone number'
     })
   }
 
@@ -220,11 +220,18 @@ if(req.body.onlyCheckMobile == true){
     })
   }
 
-  req.body.phone = "";
-  
 }
-
-    if (req.body.password) {
+  else{
+    const doesPhoneExists = await User.findOne({ $or: [{ 'phone': req.body.phone }] })
+    if (doesPhoneExists) {
+      return res.status(404).send({
+        success: false,
+        message: 'Phone number already exists, Choose different phone number'
+      })
+    }
+  }
+    
+  if (req.body.password) {
       try {
         const salt = await bcrypt.genSalt(10);
         req.body.password = await bcrypt.hash(req.body.password, salt);
