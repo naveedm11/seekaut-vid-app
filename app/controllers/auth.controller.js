@@ -36,11 +36,11 @@ exports.signup = (req, res) => {
   const { firstName, lastName, username, email, phone, gender, dob, bio, nationality, password, role } = req.body
   
   if (!email) {
-    return res.status(500).send({ status: false , message: "Please provide email" })
+    return res.status(500).send({ success: false , message: "Please provide email" })
   }
 
   if (!password) {
-    return res.status(500).send({ status: false , message: "Please set password" })
+    return res.status(500).send({ success: false , message: "Please set password" })
   }
 
   let fullName = req.body.firstName + " " + req.body.lastName
@@ -98,7 +98,7 @@ exports.signup = (req, res) => {
                     return;
                   }
 
-                  res.status(200).send({ status: true, message: "User was registered successfully!" });
+                  res.status(200).send({ success: true, message: "User was registered successfully!" });
                 });
               }
             );
@@ -116,7 +116,7 @@ exports.signup = (req, res) => {
                   return;
                 }
 
-                res.send({ status: true, message: "User was registered successfully!" });
+                res.send({ success: true, message: "User was registered successfully!" });
               });
             });
           }
@@ -125,7 +125,7 @@ exports.signup = (req, res) => {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).send({ status: false , error: error });
+      res.status(500).send({ success: false , error: error });
     }
   }
 
@@ -137,7 +137,7 @@ exports.signup = (req, res) => {
         return;
       }
 
-      res.status(200).send({ status: true , message: "User was registered successfully!" });
+      res.status(200).send({ success: true , message: "User was registered successfully!" });
     });
   }
 };
@@ -154,7 +154,7 @@ exports.signin = (req, res) => {
       }
 
       if (!user) {
-        return res.status(404).send({ status: false, message: "User Not found." });
+        return res.status(404).send({ success: false, message: "User Not found." });
       }
 
       var passwordIsValid = bcrypt.compareSync(
@@ -189,9 +189,18 @@ exports.signin = (req, res) => {
     });
 };
 
-
 //update user
 exports.updateUser = async (req, res) => {
+
+ if(req.body.username){
+  const doesUserNameExists = await User.findOne({ $or: [{ 'username': req.body.username }] })
+  if (doesUserNameExists) {
+    return res.status(500).send({
+      success: false,
+      message: 'Username already exists,Choose different username'
+    })
+  }
+}
 
     if (req.body.password) {
       try {
@@ -218,7 +227,7 @@ exports.updateUser = async (req, res) => {
       await user.save();
       console.log("user==>", user);
 
-      res.status(200).send({ status: true , message: "User is updated successfully!"});
+      res.status(200).send({ success: true , message: "User is updated successfully!"});
     } 
     catch (err) {
       return res.status(500).json(err);
