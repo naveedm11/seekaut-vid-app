@@ -121,7 +121,8 @@ exports.signin = (req, res) => {
 
 //update user
 exports.updateUser = async (req, res) => {
-
+  
+  console.log("body==>", req.body);
   if (req.file) {
     try {
       console.log("file is uploaded");
@@ -203,7 +204,7 @@ exports.updateUser = async (req, res) => {
   }
 }
 
-if(req.body.phone){
+if(req.body.onlyCheckMobile == true){
   const doesPhoneExists = await User.findOne({ $or: [{ 'phone': req.body.phone }] })
   if (doesPhoneExists) {
     return res.status(404).send({
@@ -211,6 +212,16 @@ if(req.body.phone){
       message: 'Phone number already exists,Choose different phone number'
     })
   }
+
+  else {
+    return res.status(200).send({
+      success: true,
+      message: 'Valid phone number'
+    })
+  }
+
+  req.body.phone = "";
+  
 }
 
     if (req.body.password) {
