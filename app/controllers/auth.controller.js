@@ -59,78 +59,7 @@ exports.signup = (req, res) => {
 
   });
 
-  if (req.file) {
-    try {
-      console.log("file is uploaded");
-      let params = uploadParams;
-
-      params.Key = Date.now() + "--" + req.file.originalname;
-      params.Body = req.file.buffer;
-
-      s3Client.upload(params, async (err, data) => {
-
-        if (err) {
-          res.status(500).json({ error: "Error -> " + err });
-        }
-        user.profilePic = data.Location
-
-        user.save((err, user) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-          console.log(role);
-          if (role) {
-            Role.find(
-              {
-                name: { $in: role }
-              },
-              (err, roles) => {
-                if (err) {
-                  res.status(500).send({ message: err });
-                  return;
-                }
-
-                user.roles = roles.map(role => role._id);
-                user.save(err => {
-                  if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                  }
-
-                  res.status(200).send({ success: true, message: "User was registered successfully!" });
-                });
-              }
-            );
-        
-          } else {
-            Role.findOne({ name: "user" }, (err, role) => {
-              if (err) {
-                res.status(500).send({ message: err });
-                return;
-              }
-
-              user.roles = [role._id];
-              user.save(err => {
-                if (err) {
-                  res.status(500).send({ message: err });
-                  return;
-                }
-
-                res.send({ user_id: user._id, success: true, message: "User was registered successfully!" });
-              });
-            });
-          }
-        });
-
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send({ success: false , error: error });
-    }
-  }
-
-  else {
+  // else {
     console.log("file is not uploaded");
     user.save(err => {
       if (err) {
@@ -140,7 +69,7 @@ exports.signup = (req, res) => {
 
       res.status(200).send({ user_id: user._id, success: true , message: "User was registered successfully!" });
     });
-  }
+  // }
 };
 
 exports.signin = (req, res) => {
@@ -193,12 +122,93 @@ exports.signin = (req, res) => {
 //update user
 exports.updateUser = async (req, res) => {
 
+  if (req.file) {
+    try {
+      console.log("file is uploaded");
+      let params = uploadParams;
+
+      params.Key = Date.now() + "--" + req.file.originalname;
+      params.Body = req.file.buffer;
+
+      s3Client.upload(params, async (err, data) => {
+
+        if (err) {
+          res.status(500).json({ error: "Error -> " + err });
+        }
+        req.body.profilePic = data.Location
+
+        // user.save((err, user) => {
+        //   if (err) {
+        //     res.status(500).send({ message: err });
+        //     return;
+        //   }
+        //   console.log(role);
+        //   if (role) {
+        //     Role.find(
+        //       {
+        //         name: { $in: role }
+        //       },
+        //       (err, roles) => {
+        //         if (err) {
+        //           res.status(500).send({ message: err });
+        //           return;
+        //         }
+
+        //         user.roles = roles.map(role => role._id);
+        //         user.save(err => {
+        //           if (err) {
+        //             res.status(500).send({ message: err });
+        //             return;
+        //           }
+
+        //           res.status(200).send({ success: true, message: "User was registered successfully!" });
+        //         });
+        //       }
+        //     );
+        
+        //   } else {
+        //     Role.findOne({ name: "user" }, (err, role) => {
+        //       if (err) {
+        //         res.status(500).send({ message: err });
+        //         return;
+        //       }
+
+        //       user.roles = [role._id];
+        //       user.save(err => {
+        //         if (err) {
+        //           res.status(500).send({ message: err });
+        //           return;
+        //         }
+
+        //         res.send({ user_id: user._id, success: true, message: "User was registered successfully!" });
+        //       });
+        //     });
+        //   }
+        // });
+
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ success: false , error: error });
+    }
+  }
+
  if(req.body.username){
   const doesUserNameExists = await User.findOne({ $or: [{ 'username': req.body.username }] })
   if (doesUserNameExists) {
     return res.status(404).send({
       success: false,
       message: 'Username already exists,Choose different username'
+    })
+  }
+}
+
+if(req.body.phone){
+  const doesPhoneExists = await User.findOne({ $or: [{ 'phone': req.body.phone }] })
+  if (doesPhoneExists) {
+    return res.status(404).send({
+      success: false,
+      message: 'Phone number already exists,Choose different phone number'
     })
   }
 }
@@ -226,7 +236,6 @@ exports.updateUser = async (req, res) => {
         user.fullName = user.fullName.split(' ')[0] + ' ' + req.body.lastName
       }
       await user.save();
-      console.log("user==>", user);
 
       res.status(200).send({ success: true , message: "User is updated successfully!"});
     } 
@@ -237,3 +246,11 @@ exports.updateUser = async (req, res) => {
   //   return res.status(403).json("You can update only your account!");
   // }
 }
+
+
+exports.getProfile = async (req, res) => {
+  const user = await User.findOne({ _id: req.params.id })
+   
+  res.status(200).send({ success: true , user: user});
+
+};
