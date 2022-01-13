@@ -36,11 +36,11 @@ exports.signup = (req, res) => {
   const { firstName, lastName, username, email, phone, gender, dob, bio, nationality, password, role } = req.body
   
   if (!email) {
-    return res.status(500).send({ success: false , message: "Please provide email" })
+    return res.status(401).send({ success: false , message: "Please provide email" })
   }
 
   if (!password) {
-    return res.status(500).send({ success: false , message: "Please set password" })
+    return res.status(401).send({ success: false , message: "Please set password" })
   }
 
   let fullName = req.body.firstName + " " + req.body.lastName
@@ -102,6 +102,7 @@ exports.signup = (req, res) => {
                 });
               }
             );
+        
           } else {
             Role.findOne({ name: "user" }, (err, role) => {
               if (err) {
@@ -116,7 +117,7 @@ exports.signup = (req, res) => {
                   return;
                 }
 
-                res.send({ success: true, message: "User was registered successfully!" });
+                res.send({ user_id: user._id, success: true, message: "User was registered successfully!" });
               });
             });
           }
@@ -137,7 +138,7 @@ exports.signup = (req, res) => {
         return;
       }
 
-      res.status(200).send({ success: true , message: "User was registered successfully!" });
+      res.status(200).send({ user_id: user._id, success: true , message: "User was registered successfully!" });
     });
   }
 };
@@ -195,7 +196,7 @@ exports.updateUser = async (req, res) => {
  if(req.body.username){
   const doesUserNameExists = await User.findOne({ $or: [{ 'username': req.body.username }] })
   if (doesUserNameExists) {
-    return res.status(500).send({
+    return res.status(404).send({
       success: false,
       message: 'Username already exists,Choose different username'
     })
