@@ -67,21 +67,55 @@ exports.signup = (req, res) => {
         return;
       }
 
-      res.status(200).send({ user_id: user._id, success: true , message: "User was registered successfully!" });
+      var token = jwt.sign({ id: user.id }, config.secret, {
+        expiresIn: 86400 // 24 hours
+      });
+
+      var authorities = [];
+
+      for (let i = 0; i < user.roles.length; i++) {
+        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+      }
+
+      res.status(200).send({ 
+        user_id: user._id, 
+        accessToken: token, 
+        success: true , 
+        message: "User was registered successfully!" });
     });
   // }
 };
 
-exports.signin = (req, res) => {
-  User.findOne({
-    email: req.body.email
-  })
-    .populate("roles", "-__v")
-    .exec((err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
+exports.signin = async (req, res) => {
+
+  var user = {};
+
+  if(req.body.username){
+    console.log("iff==>", req.body.username);
+    user = await User.findOne({ username: req.body.username })
+    console.log("user==>", user);
+  }
+
+  if(req.body.email){
+    console.log("iff==>", req.body.email);
+    user = await User.findOne({ email: req.body.email })
+    console.log("user==>", user);
+  }
+
+  if(req.body.phone){
+    console.log("iff==>", req.body.phone);
+    user = await User.findOne({ phone: req.body.phone })
+    console.log("user==>", user);
+
+  }
+    // .populate("roles", "-__v")
+    // .exec((err, user) => {
+    //   if (err) {
+    //     res.status(500).send({ message: err });
+    //     return;
+    //   }
+
+console.log("outside user==>", user);
 
       if (!user) {
         return res.status(404).send({ success: false, message: "User Not found." });
@@ -94,7 +128,7 @@ exports.signin = (req, res) => {
 
       if (!passwordIsValid) {
         return res.status(401).send({
-          status: false,
+          success: false,
           accessToken: null,
           message: "Invalid Password!"
         });
@@ -116,7 +150,7 @@ exports.signin = (req, res) => {
         roles: authorities,
         accessToken: token
       });
-    });
+    
 };
 
 //update user
@@ -222,13 +256,16 @@ if(req.body.onlyCheckMobile && req.body.onlyCheckMobile == true){
 
 }
   else{
-    const doesPhoneExists = await User.findOne({ $or: [{ 'phone': req.body.phone }] })
+    if(req.body.phone)
+    {
+       const doesPhoneExists = await User.findOne({ $or: [{ 'phone': req.body.phone }] })
     if (doesPhoneExists) {
       return res.status(404).send({
         success: false,
         message: 'Phone number already exists, Choose different phone number'
       })
-    }
+    }}
+   
   }
     
   if (req.body.password) {
