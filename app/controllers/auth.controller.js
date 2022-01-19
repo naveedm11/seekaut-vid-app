@@ -135,7 +135,7 @@ console.log("outside user==>", user);
       }
 
       var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 86400 // 24 hours
+        expiresIn: '365d' // 24 hours
       });
 
       var authorities = [];
@@ -147,7 +147,6 @@ console.log("outside user==>", user);
         id: user._id,
         username: user.username,
         email: user.email,
-        roles: authorities,
         accessToken: token
       });
     
@@ -157,7 +156,7 @@ console.log("outside user==>", user);
 exports.updateUser = async (req, res) => {
   
   console.log("body==>", req.body);
-  if (req.file) {
+  if (req.files) {
     try {
       console.log("file is uploaded");
       let params = uploadParams;
