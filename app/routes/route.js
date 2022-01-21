@@ -8,6 +8,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const Conversation = require("../models/conversation");
 const sound = require("../controllers/soundConroller");
+const user_action = require("../controllers/user_actions");
 
 const Message = require("../models/message");
 
@@ -124,4 +125,8 @@ app.post(
 sound.uploadSound
 );
 app.get("/fetchSound",   [authJwt.verifyToken],  sound.fetchSound);
+
+app.get("/follow/:follower/:followed", user_action.follow);
+app.get("/unfollow/:follower/:followed", user_action.unfollow);
+
 module.exports = app;
