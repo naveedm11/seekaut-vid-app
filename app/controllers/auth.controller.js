@@ -145,6 +145,7 @@ console.log("outside user==>", user);
       }
 
       res.status(200).send({
+        success : true,
         id: user._id,
         username: user.username,
         email: user.email,
