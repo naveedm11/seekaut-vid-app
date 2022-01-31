@@ -8,13 +8,12 @@ const UserVideo = mongoose.model(
     videoName: String,
     description: String,
     soundId: { type: Schema.Types.ObjectId, ref: 'Sound' },
-    tags: {
-      type: Array,
-    },
+    tags: {type: Array},
     is_active: { type: Boolean, default: false },
     is_deleted: { type: Boolean, default: false },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     count: { type: Schema.Types.ObjectId, ref: 'VideoCount' },
+    status : { type : String}
   })
 );
 

@@ -27,11 +27,8 @@ app.post(
 );
 app.get("/fetch/:id", [authJwt.verifyToken], userVideoController.fetchVideo);
 app.get("/fetchAll", userVideoController.fetchAllVideo);
-app.delete(
-  "/deleteVideo/:id",
-  [authJwt.verifyToken],
-  userVideoController.deleteVideo
-);
+app.delete("/deleteVideo/:id",[authJwt.verifyToken],userVideoController.deleteVideo );
+
 app.post(
   "/searchVideoByTag",
   [authJwt.verifyToken],

@@ -4,6 +4,8 @@ const VideoCount = require("../models/videoCount.model");
 const S3 = require("aws-sdk/clients/s3");
 const AWS = require("aws-sdk");
 const wasabiEndpoint = new AWS.Endpoint("s3.eu-central-1.wasabisys.com ");
+const db = require("../models");
+const User = db.user;
 
 const accessKeyId = "CW02H3YPJOCHACJRVG94";
 const secretAccessKey = "AeERvP8EjaTiSiHMtteAyyH0jYEUfMkSPBlmVD4H";
@@ -108,6 +110,10 @@ exports.fetchAllVideo = async (req, res) => {
 
     var page = parseInt(req.query.page)
     var size = parseInt(req.query.size)
+    var user_id = String(req.query.user_id)
+
+    // const user = await User.findOne({user_id});
+
     var query = {}
     if (page < 0 || page === 0) {
       response = { "error": true, "message": "invalid page number, should start with 1" };
@@ -126,6 +132,27 @@ exports.fetchAllVideo = async (req, res) => {
         .status(404)
         .send({ status: "Failed", message: "Video Not Found" });
     }
+    
+    for(let item of userVideo)
+    {
+        let uploader_id =  String(item.user._id);
+       
+        const uploader = await User.findOne({uploader_id})
+
+        const index_of_follower = uploader.followed_by.indexOf(user_id);
+        const is_following = index_of_follower !== -1;
+        
+        console.log("index==>", index_of_follower);
+
+        console.log("is following==>", is_following);
+        if(is_following){
+          item.status = 1;
+        }
+        else {
+          item.status = 0;
+        }
+      }
+
     res.status(200).send({
       status: "success",
       message: "video fetched",

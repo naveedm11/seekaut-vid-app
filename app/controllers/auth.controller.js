@@ -91,22 +91,15 @@ exports.signin = async (req, res) => {
   var user = {};
 
   if(req.body.username){
-    console.log("iff==>", req.body.username);
     user = await User.findOne({ username: req.body.username })
-    console.log("user==>", user);
   }
 
   if(req.body.email){
-    console.log("iff==>", req.body.email);
     user = await User.findOne({ email: req.body.email })
-    console.log("user==>", user);
   }
 
   if(req.body.phone){
-    console.log("iff==>", req.body.phone);
     user = await User.findOne({ phone: req.body.phone })
-    console.log("user==>", user);
-
   }
     // .populate("roles", "-__v")
     // .exec((err, user) => {
@@ -114,8 +107,6 @@ exports.signin = async (req, res) => {
     //     res.status(500).send({ message: err });
     //     return;
     //   }
-
-console.log("outside user==>", user);
 
       if (!user) {
         return res.status(404).send({ success: false, message: "User Not found." });
@@ -279,7 +270,7 @@ if(req.body.onlyCheckMobile && req.body.onlyCheckMobile == true){
 
     try {
 
-      const user = await User.findOneAndUpdate({ _id: ObjectId(req.params.id)}, {$set: req.body});
+      const user = await User.findOneAndUpdate({ _id: ObjectId(req.params.id)}, {$set: req.body} , {new : true});
 
       if (req.body.hasOwnProperty('firstName') && req.body.hasOwnProperty('lastName')) {
         user.fullName = req.body.firstName + ' ' + req.body.lastName
@@ -302,10 +293,21 @@ if(req.body.onlyCheckMobile && req.body.onlyCheckMobile == true){
   // }
 }
 
-
 exports.getProfile = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id })
    
   res.status(200).send({ success: true , user: user});
-
 };
+
+exports.editProfile = async (req, res) => {
+  
+    try {
+      const user = await User.findOneAndUpdate({ _id: ObjectId(req.params.id)}, {$set: req.body});
+
+      res.status(200).send({ success: true , message: "User is updated successfully!"});
+    } 
+    catch (err) {
+      return res.status(500).json(err);
+    }
+ 
+}

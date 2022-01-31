@@ -58,7 +58,6 @@ exports.unfollow = async (req, res) => {
 
         if(already_liked_by_me){
             res.status(400).send({ success: false , message: "you are not following this user", following : user.following});
-
         }
 
     await User.findOneAndUpdate(
