@@ -17,7 +17,14 @@ const s3Client = new S3({
   secretAccessKey,
 });
 const BUCKET_NAME = "seekaut";
-const uploadParams = {
+
+const videoParams = {
+  Bucket: BUCKET_NAME,
+  Key: "", // pass key
+  Body: null, // pass file body
+};
+
+const thumbnailParams = {
   Bucket: BUCKET_NAME,
   Key: "", // pass key
   Body: null, // pass file body
@@ -29,58 +36,93 @@ const fetchParams = {
 };
 
 exports.upload = async (req, res) => {
-  console.log(req.file);
-  if (req.file) {
+
+  let user_video = {};
+  let userVideo = {};
+
+  if (req.files) {
     try {
-      let params = uploadParams;
+      let video_params = videoParams;
+      let thumbnail_params = thumbnailParams;
 
-      params.Key = Date.now() + "--" + req.file.originalname;
-      params.Body = req.file.buffer;
+      const video = req.files.video[0];
+      const thumbnail = req.files.thumbnail[0];
 
-      s3Client.upload(params, async (err, data) => {
+      video_params.Key = Date.now() + "--" + video.originalname;
+      video_params.Body = video.buffer;
+
+      thumbnail_params.Key = Date.now() + "--" + thumbnail.originalname;
+      thumbnail_params.Body = thumbnail.buffer;
+
+      s3Client.upload(video_params, async (err, data) => {
         if (err) {
           res.status(500).json({ error: "Error -> " + err });
         }
+        user_video.videoUrl = data.Location;
+        user_video.videoName = video_params.Key
 
-        const userVideo = await UserVideo.create({
-          user: req.userId,
-          videoUrl: data.Location,
-          videoName: params.Key,
-          tags: req.body.tags,
-          soundId: req.body.soundId,
-          description: req.body.description
+        s3Client.upload(thumbnail_params, async (err, data) => {
+          if (err) {
+            res.status(500).json({ error: "Error -> " + err });
+          }
+          user_video.thumbnailUrl = data.Location;
+
+          userVideo = await UserVideo.create({
+            user: req.userId,
+            videoUrl: user_video.videoUrl,
+            videoName: user_video.videoName,
+            tags: req.body.tags,
+            category : req.body.category,
+            soundId: req.body.soundId,
+            description: req.body.description,
+            thumbnailUrl : data.Location
+          });
+  
+          if (userVideo) {
+            const videoCount = await VideoCount.create({
+              video: userVideo._id,
+            });
+            if (videoCount) {
+              userVideo.count = videoCount._id;
+            }
+    
+           console.log({userVideo});
+    
+            res.json({
+              message: "File uploaded successfully",
+              id : userVideo._id,
+              filename: video_params.Key,
+              location: userVideo.videoUrl,
+              thumbnail: userVideo.thumbnailUrl
+            });
+          } else {
+            res
+              .status(500)
+              .send({ status: "failed", message: "video not uploaded" });
+          }
+  
         });
 
-        if (userVideo) {
-          const videoCount = await VideoCount.create({
-            video: userVideo._id,
-          });
-          if (videoCount) {
-            userVideo.count = videoCount._id;
-          }
-          userVideo.save();
-          res.json({
-            message: "File uploaded successfully",
-            filename: params.Key,
-            location: data.Location,
-          });
-        } else {
-          res
-            .status(500)
-            .send({ status: "failed", message: "video not uploaded" });
-        }
       });
+
     } catch (error) {
       console.log(error);
       res.status(500).send({ status: "failed", error: error });
     }
   }
+  else { console.log("no file");
+  res.status(500).send({ status: "failed", message: "no file" });
+    }
 };
+
+
 exports.fetchVideo = async (req, res) => {
   try {
     const userVideo = await UserVideo.findOne({ _id: req.params.id })
       .populate("user", "-password -roles")
-      .populate("count", "-_id");
+      .populate("count", "-_id")
+      .populate("category", "_id title")
+      ;
 
     if (!userVideo) {
       return res
@@ -125,6 +167,7 @@ exports.fetchAllVideo = async (req, res) => {
     const userVideo = await UserVideo.find({}, {}, query)
       .populate("user", "-password -roles")
       .populate("count", "-_id")
+      .populate("category", "_id title")
       .populate("soundId");
 
     if (!userVideo) {
@@ -206,6 +249,7 @@ exports.deleteVideo = async (req, res) => {
   }
 };
 
+
 exports.SearchVideobyTag = async (req, res) => {
   try {
     const tag = req.body.tag;
@@ -228,5 +272,3 @@ exports.SearchVideobyTag = async (req, res) => {
     res.status(500).send({ status: "failed", message: error });
   }
 };
-
-

@@ -9,6 +9,7 @@ const upload = multer({ storage: storage });
 const Conversation = require("../models/conversation");
 const sound = require("../controllers/soundConroller");
 const user_action = require("../controllers/user_actions");
+const videoTags = require("../controllers/categories");
 
 const Message = require("../models/message");
 
@@ -19,13 +20,32 @@ app.get("/all", userController.allAccess);
 app.get("/user", [authJwt.verifyToken], userController.userBoard);
 
 //upload and fetch video routes
-app.post(
-  "/upload",
-  [authJwt.verifyToken],
-  upload.single("video"),
-  userVideoController.upload
-);
-app.get("/fetch/:id", [authJwt.verifyToken], userVideoController.fetchVideo);
+
+// app.post(
+//   "/upload",
+//   // [authJwt.verifyToken],
+//   upload.single("video"),
+//   userVideoController.upload
+// );
+
+app.post('/upload',
+         upload.fields([{
+           name: 'video', maxCount: 1
+         }, {
+           name: 'thumbnail', maxCount: 1
+         }]),    userVideoController.upload)
+
+// app.post(
+//   "/upload",
+//   // [authJwt.verifyToken],
+//   upload.fields( [ { name:'thumbnail', maxCount:1  },
+//                    { name: 'video', maxCount:1 } ]),
+//    userVideoController.upload
+// );
+
+app.get("/fetch/:id",
+//  [authJwt.verifyToken],
+  userVideoController.fetchVideo);
 app.get("/fetchAll", userVideoController.fetchAllVideo);
 app.delete("/deleteVideo/:id",[authJwt.verifyToken],userVideoController.deleteVideo );
 
@@ -125,5 +145,12 @@ app.get("/fetchSound",   [authJwt.verifyToken],  sound.fetchSound);
 
 app.get("/follow/:follower/:followed", user_action.follow);
 app.get("/unfollow/:follower/:followed", user_action.unfollow);
+
+app.post(
+  "/creatCategory",
+  videoTags.add_tag
+);
+
+app.get("/fetchCategories", videoTags.get_tags);
 
 module.exports = app;
