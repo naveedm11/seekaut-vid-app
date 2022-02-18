@@ -1,6 +1,7 @@
 var fs = require("fs");
 const UserVideo = require("../models/uservideo.model");
 const VideoCount = require("../models/videoCount.model");
+const Category = require("../models/categories");
 const S3 = require("aws-sdk/clients/s3");
 const AWS = require("aws-sdk");
 const wasabiEndpoint = new AWS.Endpoint("s3.eu-central-1.wasabisys.com ");
@@ -37,6 +38,13 @@ const fetchParams = {
 
 exports.upload = async (req, res) => {
 
+  const cat = await Category.findOne({ _id: req.body.category });
+  if(!cat){
+    res
+              .status(500)
+              .send({ status: "failed", message: "category not found" });
+  }
+
   let user_video = {};
   let userVideo = {};
 
@@ -44,6 +52,7 @@ exports.upload = async (req, res) => {
     try {
       let video_params = videoParams;
       let thumbnail_params = thumbnailParams;
+
 
       const video = req.files.video[0];
       const thumbnail = req.files.thumbnail[0];
@@ -85,9 +94,7 @@ exports.upload = async (req, res) => {
             if (videoCount) {
               userVideo.count = videoCount._id;
             }
-    
-           console.log({userVideo});
-    
+        
             res.json({
               message: "File uploaded successfully",
               id : userVideo._id,
