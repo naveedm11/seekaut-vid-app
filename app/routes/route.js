@@ -54,6 +54,14 @@ app.post(
   [authJwt.verifyToken],
   userVideoController.SearchVideobyTag
 );
+
+
+app.post(
+  "/searchVideoByCategory",
+  // [authJwt.verifyToken],
+  userVideoController.SearchVideobyCategory
+);
+
 app.post(
   "/searchUsersByName",
   userController.searchUsersByName

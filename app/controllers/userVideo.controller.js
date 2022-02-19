@@ -38,7 +38,7 @@ const fetchParams = {
 
 exports.upload = async (req, res) => {
 
-  const cat = await Category.findOne({ _id: req.body.category });
+  const cat = await Category.findOne({ _id: req.req.body.category });
   if(!cat){
     res
               .status(500)
@@ -52,7 +52,6 @@ exports.upload = async (req, res) => {
     try {
       let video_params = videoParams;
       let thumbnail_params = thumbnailParams;
-
 
       const video = req.files.video[0];
       const thumbnail = req.files.thumbnail[0];
@@ -256,7 +255,6 @@ exports.deleteVideo = async (req, res) => {
   }
 };
 
-
 exports.SearchVideobyTag = async (req, res) => {
   try {
     const tag = req.body.tag;
@@ -273,6 +271,29 @@ exports.SearchVideobyTag = async (req, res) => {
       data: userVideo,
     });
 
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ status: "failed", message: error });
+  }
+};
+
+
+exports.SearchVideobyCategory = async (req, res) => {
+  try {
+    const cat = req.body.category;
+    const userVideo = await UserVideo.find({ category: cat });
+    console.log(userVideo);
+    if (!userVideo.length > 0) {
+      return res
+        .status(404)
+        .send({ status: "Failed", message: "Video Not Found" });
+    }
+    res.status(200).send({
+      status: "success",
+      message: "video fetched",
+      data: userVideo,
+    });
 
   } catch (error) {
     console.log(error);
