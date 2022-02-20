@@ -5,6 +5,7 @@ const VideoCount = mongoose.model(
     "VideoCount",
     new Schema({
         likesCount: { type: Number, default: 0 },
+        likedBy: [],
         commentCount: { type: Number, default: 0 },
         comments: [{
             user: { type: Schema.Types.ObjectId, ref: 'User' },

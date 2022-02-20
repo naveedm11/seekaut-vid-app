@@ -59,7 +59,7 @@ app.post(
 );
 
 //like and comment routes
-app.get("/like/:id", 
+app.get("/like/:vid_id/:user_id", 
 // [authJwt.verifyToken], 
 videoCountController.like);
 

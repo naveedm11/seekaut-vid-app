@@ -4,7 +4,7 @@ const User = require("../models/user.model")
 const ObjectId = require('mongodb').ObjectId;
 
 exports.like = async(req, res) => {
-    video_id = req.params.id
+    video_id = req.params.vid_id
     if (!video_id) {
         res.status(400).send({ status: "failed", message: "please provide the video id" })
     }
@@ -13,7 +13,31 @@ exports.like = async(req, res) => {
         res.status(404).send({ status: "Failed", message: 'Video Not Found' })
     }
     
-    videoCount.likesCount++;
+    let user_id = req.params.user_id;
+    if (!user_id) {
+        res.status(400).send({ status: "failed", message: "please provide the user id" })
+    }
+
+    const user = await User.findById(user_id)
+    if (!user) {
+        res.status(404).send({ status: "Failed", message: 'User with the given id  Not Found' })
+    }
+
+    const index_of_like = videoCount.likedBy.indexOf(String(user_id));
+    const already_liked_by_me = index_of_like !== -1;
+
+    if(already_liked_by_me){
+          videoCount.likesCount--;
+          videoCount.likedBy.pull(user_id)
+        res.status(400).send({ success: true , message: "unliked successfully"});
+    }
+
+    else{
+        videoCount.likesCount++;
+        videoCount.likedBy.push(user_id )
+      res.status(400).send({ success: true , message: "liked successfully"});
+  }
+
     await videoCount.save()
     res.status(201).send({ status: "success" })
 }
