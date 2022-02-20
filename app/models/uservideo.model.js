@@ -15,7 +15,7 @@ const UserVideo = mongoose.model(
     count: { type: Schema.Types.ObjectId, ref: 'VideoCount' },
     status : { type : String},
     category: { type: Schema.Types.ObjectId, ref: 'categories' },
-    tags : []
+    tags : [],
   })
 );
 

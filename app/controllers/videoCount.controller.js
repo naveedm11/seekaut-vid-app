@@ -1,5 +1,7 @@
 const VideoCount = require("../models/videoCount.model");
+const UserVideo = require("../models/uservideo.model");
 const User = require("../models/user.model")
+const ObjectId = require('mongodb').ObjectId;
 
 exports.like = async(req, res) => {
     video_id = req.params.id
@@ -26,12 +28,10 @@ exports.comment = async(req, res) => {
         let comment = req.body.comment
         if (!comment) {
             res.status(400).send({ status: "failed", message: "please provide the Comment" })
-
         }
-        let user_id = req.body.user_id
+        let user_id = req.body.user_id;
         if (!user_id) {
             res.status(400).send({ status: "failed", message: "please provide the user id" })
-
         }
         const videoCount = await VideoCount.findOne({ video: video_id })
         if (!videoCount) {
@@ -40,17 +40,19 @@ exports.comment = async(req, res) => {
         const user = await User.findById(user_id)
         if (!user) {
             res.status(404).send({ status: "Failed", message: 'User with the given id  Not Found' })
-
         }
+
         videoCount.commentCount++;
         videoCount.comments.push({ user, comment })
         await videoCount.save()
+        await UserVideo.findOneAndUpdate({ _id: ObjectId(video_id)}, 
+        {$set: {"videodetail": videoCount._id}} , {new : true});
+
         res.status(201).send({ status: "success" })
 
-    } catch (error) {
+    } 
+    catch (error) {
         console.log(error);
         res.status(500).send({ error })
     }
-
-
 }

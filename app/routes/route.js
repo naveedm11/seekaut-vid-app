@@ -35,14 +35,6 @@ app.post('/upload',
            name: 'thumbnail', maxCount: 1
          }]),    userVideoController.upload)
 
-// app.post(
-//   "/upload",
-//   // [authJwt.verifyToken],
-//   upload.fields( [ { name:'thumbnail', maxCount:1  },
-//                    { name: 'video', maxCount:1 } ]),
-//    userVideoController.upload
-// );
-
 app.get("/fetch/:id",
 //  [authJwt.verifyToken],
   userVideoController.fetchVideo);
@@ -54,7 +46,6 @@ app.post(
   [authJwt.verifyToken],
   userVideoController.SearchVideobyTag
 );
-
 
 app.post(
   "/searchVideoByCategory",
@@ -68,8 +59,13 @@ app.post(
 );
 
 //like and comment routes
-app.get("/like/:id", [authJwt.verifyToken], videoCountController.like);
-app.post("/comment", [authJwt.verifyToken], videoCountController.comment);
+app.get("/like/:id", 
+// [authJwt.verifyToken], 
+videoCountController.like);
+
+app.post("/comment", 
+// [authJwt.verifyToken], 
+videoCountController.comment);
 
 app.get(
   "/admin",
@@ -117,7 +113,6 @@ app.get("/findUserConvo/:firstUserId/:secondUserId", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
 
 app.post("/sendMessage", async (req, res) => {
   const newMessage = new Message(req.body);
