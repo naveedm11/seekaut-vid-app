@@ -27,14 +27,35 @@ exports.like = async(req, res) => {
     const already_liked_by_me = index_of_like !== -1;
 
     if(already_liked_by_me){
-          videoCount.likesCount--;
-          videoCount.likedBy.pull(user_id)
+        videoCount.likesCount--;
+        await VideoCount.findOneAndUpdate(
+            {
+                _id: ObjectId(videoCount._id)
+            },
+            {
+                $pull: { likedBy: user_id}
+            },
+            {
+                new: true
+            });
+
         res.status(400).send({ success: true , message: "unliked successfully"});
     }
 
     else{
+
         videoCount.likesCount++;
-        videoCount.likedBy.push(user_id )
+        await VideoCount.findOneAndUpdate(
+            {
+                _id: ObjectId(videoCount._id)
+            },
+            {
+                $push: { likedBy: user_id}
+            },
+            {
+                new: true
+            });
+
       res.status(400).send({ success: true , message: "liked successfully"});
   }
 }

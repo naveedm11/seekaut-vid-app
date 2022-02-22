@@ -77,6 +77,8 @@ exports.upload = async (req, res) => {
 
           userVideo = await UserVideo.create({
             user: req.userId,
+            allow_comments: req.body.allow_comments,
+            location: req.body.location,
             videoUrl: user_video.videoUrl,
             videoName: user_video.videoName,
             tags: req.body.tags,
