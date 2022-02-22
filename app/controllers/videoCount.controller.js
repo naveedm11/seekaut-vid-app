@@ -3,6 +3,32 @@ const UserVideo = require("../models/uservideo.model");
 const User = require("../models/user.model")
 const ObjectId = require('mongodb').ObjectId;
 
+const S3 = require("aws-sdk/clients/s3");
+const AWS = require("aws-sdk");
+const wasabiEndpoint = new AWS.Endpoint("s3.eu-central-1.wasabisys.com ");
+
+const accessKeyId = "CW02H3YPJOCHACJRVG94";
+const secretAccessKey = "AeERvP8EjaTiSiHMtteAyyH0jYEUfMkSPBlmVD4H";
+
+const s3Client = new S3({
+  endpoint: wasabiEndpoint,
+  region: "eu-central-1",
+  accessKeyId,
+  secretAccessKey,
+});
+const BUCKET_NAME = "seekaut";
+
+const mediaParams = {
+  Bucket: BUCKET_NAME,
+  Key: "", // pass key
+  Body: null, // pass file body
+};
+
+const fetchParams = {
+  Bucket: BUCKET_NAME,
+  Key: "", //pass key
+};
+
 exports.like = async(req, res) => {
     video_id = req.params.vid_id
     if (!video_id) {
@@ -61,7 +87,7 @@ exports.like = async(req, res) => {
 }
 
 exports.comment = async(req, res) => {
-    try {
+
         video_id = req.body.video_id
         if (!video_id) {
             res.status(400).send({ success: false , message: "please provide the video id" })
@@ -84,16 +110,43 @@ exports.comment = async(req, res) => {
             res.status(404).send({ success: false , message: 'User with the given id  Not Found' })
         }
 
-        videoCount.commentCount++;
-        videoCount.comments.push({ user, comment })
-        await videoCount.save()
-        await UserVideo.findOneAndUpdate({ _id: ObjectId(video_id)}, 
-        {$set: {"videodetail": videoCount._id}} , {new : true});
+        if (req.file) {
+            try {
+              let media_params = mediaParams;
+        
+              const _media = req.file;
+        
+              media_params.Key = Date.now() + "--" + _media.originalname;
+              media_params.Body = _media.buffer;
+              
+              s3Client.upload(media_params, async (err, data) => {
+                if (err) {
+                  res.status(500).json({ error: "Error -> " + err });
+                }
 
-        res.status(201).send({ success: true })
+                let media = data.Location;
+      
+                videoCount.commentCount++;
+                 videoCount.comments.push({ user, comment, media })
+                  await videoCount.save()
+                
+                 res.status(201).send({ success: true })
+              });
     } 
     catch (error) {
         console.log(error);
         res.status(500).send({ error })
     }
+}
+
+else {
+    let _media = "";
+      
+    videoCount.commentCount++;
+     videoCount.comments.push({ user, comment, _media })
+      await videoCount.save()
+
+     res.status(201).send({ success: true })
+
+}
 }

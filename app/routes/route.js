@@ -65,6 +65,7 @@ videoCountController.like);
 
 app.post("/comment", 
 // [authJwt.verifyToken], 
+upload.single("media"),
 videoCountController.comment);
 
 app.get(
