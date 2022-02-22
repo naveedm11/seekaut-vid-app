@@ -38,7 +38,7 @@ const fetchParams = {
 
 exports.upload = async (req, res) => {
 
-  const cat = await Category.findOne({ _id: req.req.body.category });
+  const cat = await Category.findOne({ _id: req.body.category });
   if(!cat){
     res
               .status(500)
