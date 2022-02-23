@@ -98,6 +98,7 @@ exports.upload = async (req, res) => {
             }
         
             res.json({
+              success : true,
               message: "File uploaded successfully",
               id : userVideo._id,
               filename: video_params.Key,
@@ -107,7 +108,7 @@ exports.upload = async (req, res) => {
           } else {
             res
               .status(500)
-              .send({ status: "failed", message: "video not uploaded" });
+              .send({ success: false, message: "video not uploaded" });
           }
   
         });
@@ -116,14 +117,13 @@ exports.upload = async (req, res) => {
 
     } catch (error) {
       console.log(error);
-      res.status(500).send({ status: "failed", error: error });
+      res.status(500).send({ success: false, error: error });
     }
   }
   else { console.log("no file");
-  res.status(500).send({ status: "failed", message: "no file" });
+  res.status(500).send({ success: false, message: "no file" });
     }
 };
-
 
 exports.fetchVideo = async (req, res) => {
   try {
