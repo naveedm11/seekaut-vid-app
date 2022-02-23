@@ -50,6 +50,7 @@ exports.upload = async (req, res) => {
 
   if (req.files) {
     try {
+      console.log("this is an API");
       let video_params = videoParams;
       let thumbnail_params = thumbnailParams;
 

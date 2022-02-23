@@ -16,6 +16,7 @@ const s3Client = new S3({
   accessKeyId,
   secretAccessKey,
 });
+
 const BUCKET_NAME = "seekaut";
 
 const mediaParams = {
