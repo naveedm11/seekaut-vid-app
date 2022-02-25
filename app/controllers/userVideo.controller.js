@@ -50,7 +50,6 @@ exports.upload = async (req, res) => {
 
   if (req.files) {
     try {
-      console.log("this is an API");
       let video_params = videoParams;
       let thumbnail_params = thumbnailParams;
 
@@ -77,7 +76,7 @@ exports.upload = async (req, res) => {
           user_video.thumbnailUrl = data.Location;
 
           userVideo = await UserVideo.create({
-            user: req.userId,
+            user: req.body.userId,
             allow_comments: req.body.allow_comments,
             location: req.body.location,
             videoUrl: user_video.videoUrl,
@@ -120,7 +119,7 @@ exports.upload = async (req, res) => {
       res.status(500).send({ success: false, error: error });
     }
   }
-  else { console.log("no file");
+  else {
   res.status(500).send({ success: false, message: "no file" });
     }
 };
@@ -174,7 +173,7 @@ exports.fetchAllVideo = async (req, res) => {
     query.limit = size
 
     const userVideo = await UserVideo.find({}, {}, query)
-      .populate("user", "-password -roles")
+      .populate("user", "_id -password -roles")
       .populate("count", "-_id")
       .populate("category", "_id title")
       .populate("soundId");
@@ -187,6 +186,7 @@ exports.fetchAllVideo = async (req, res) => {
     
     for(let item of userVideo)
     {
+      console.log("item==>", item);
         let uploader_id =  String(item.user._id);
        
         const uploader = await User.findOne({uploader_id})
