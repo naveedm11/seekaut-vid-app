@@ -66,7 +66,7 @@ exports.like = async(req, res) => {
                 new: true
             });
        
-            videoCount.likesCount = videoCount.likesCount--;
+            videoCount.likesCount--;
             await videoCount.save();
 
         res.status(400).send({ success: true , message: "unliked successfully"});
@@ -85,8 +85,8 @@ exports.like = async(req, res) => {
                 new: true
             });
 
-            videoCount.likesCount = videoCount.likesCount++;
-           await videoCount.save();
+            videoCount.likesCount++;
+            await videoCount.save();
 
       res.status(400).send({ success: true , message: "liked successfully"});
   }
