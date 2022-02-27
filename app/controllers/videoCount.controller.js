@@ -54,7 +54,7 @@ exports.like = async(req, res) => {
     const already_liked_by_me = index_of_like !== -1;
 
     if(already_liked_by_me){
-        videoCount.likesCount--;
+
         await VideoCount.findOneAndUpdate(
             {
                 _id: ObjectId(videoCount._id)
@@ -65,13 +65,15 @@ exports.like = async(req, res) => {
             {
                 new: true
             });
+       
+            videoCount.likesCount = videoCount.likesCount--;
+            await videoCount.save();
 
         res.status(400).send({ success: true , message: "unliked successfully"});
     }
 
     else{
 
-        videoCount.likesCount++;
         await VideoCount.findOneAndUpdate(
             {
                 _id: ObjectId(videoCount._id)
@@ -82,6 +84,9 @@ exports.like = async(req, res) => {
             {
                 new: true
             });
+
+            videoCount.likesCount = videoCount.likesCount++;
+           await videoCount.save();
 
       res.status(400).send({ success: true , message: "liked successfully"});
   }
@@ -128,8 +133,8 @@ exports.comment = async(req, res) => {
                 let media = data.Location;
       
                 videoCount.commentCount++;
-                 videoCount.comments.push({ user, comment, media })
-                  await videoCount.save()
+                videoCount.comments.push({ user, comment, media })
+                await videoCount.save()
                 
                  res.status(201).send({ success: true })
               });
@@ -144,8 +149,8 @@ else {
     let _media = "";
       
     videoCount.commentCount++;
-     videoCount.comments.push({ user, comment, _media })
-      await videoCount.save()
+    videoCount.comments.push({ user, comment, _media })
+    await videoCount.save()
 
      res.status(201).send({ success: true })
 

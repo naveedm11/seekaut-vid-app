@@ -7,6 +7,7 @@ const AWS = require("aws-sdk");
 const wasabiEndpoint = new AWS.Endpoint("s3.eu-central-1.wasabisys.com ");
 const db = require("../models");
 const User = db.user;
+const ObjectId = require('mongodb').ObjectId;
 
 const accessKeyId = "CW02H3YPJOCHACJRVG94";
 const secretAccessKey = "AeERvP8EjaTiSiHMtteAyyH0jYEUfMkSPBlmVD4H";
@@ -92,9 +93,9 @@ exports.upload = async (req, res) => {
             const videoCount = await VideoCount.create({
               video: userVideo._id,
             });
-            if (videoCount) {
-              userVideo.count = videoCount._id;
-            }
+
+            userVideo.count = videoCount._id;
+            userVideo.save();
         
             res.json({
               success : true,
@@ -128,8 +129,9 @@ exports.fetchVideo = async (req, res) => {
   try {
     const userVideo = await UserVideo.findOne({ _id: req.params.id })
       .populate("user", "-password -roles")
-      .populate("count", "-_id")
+      .populate("count", "_id")
       .populate("category", "_id title")
+      .populate("soundId");
       ;
 
     if (!userVideo) {
@@ -174,7 +176,7 @@ exports.fetchAllVideo = async (req, res) => {
 
     const userVideo = await UserVideo.find({}, {}, query)
       .populate("user", "_id -password -roles")
-      .populate("count", "-_id")
+      .populate("count", "-_id ")
       .populate("category", "_id title")
       .populate("soundId");
 
