@@ -7,6 +7,8 @@ exports.add_tag = async(req, res) => {
       await tag.save();
 
       const resp = {
+          success: true,
+          message: "category is added",
         category: tag,
         code: 200
     };
@@ -24,6 +26,8 @@ exports.get_tags = async(req, res) => {
       const tags = await videoTags.find({});
      
       const resp = {
+        success: true,
+        message: "categories are fetched succssfully",
         categories: tags,
         code: 200
     };
