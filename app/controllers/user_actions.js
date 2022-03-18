@@ -14,10 +14,11 @@ exports.follow = async (req, res) => {
         const already_liked_by_me = index_of_like !== -1;
 
         if(already_liked_by_me){
-            res.status(400).send({ success: false , message: "already added", following : user.following});
+            res.status(400).send({ success: false , message: "already added"});
 
         }
 
+        else{
     await User.findOneAndUpdate(
         {
             _id: ObjectId(req.params.followed)
@@ -42,6 +43,7 @@ exports.follow = async (req, res) => {
     
       res.status(200).send({ success: true , message: "follower added"});
     } 
+}
     catch (err) {
      res.status(401).send({ success: false , message: "follower could not be added"});
     }
@@ -57,9 +59,10 @@ exports.unfollow = async (req, res) => {
         const already_liked_by_me = index_of_like == -1;
 
         if(already_liked_by_me){
-            res.status(400).send({ success: false , message: "you are not following this user", following : user.following});
+            res.status(400).send({ success: false , message: "you are not following this user"});
         }
 
+        else{
     await User.findOneAndUpdate(
         {
             _id: ObjectId(req.params.followed)
@@ -84,6 +87,7 @@ exports.unfollow = async (req, res) => {
     
       res.status(200).send({ success: true , message: "unfollowed successfully"});
     } 
+}
     catch (err) {
      res.status(401).send({ success: false , message: "follower could not be removed"});
     }
