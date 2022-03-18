@@ -174,7 +174,7 @@ exports.fetchAllVideo = async (req, res) => {
     query.skip = size * (page - 1)
     query.limit = size
 
-    const userVideo = await UserVideo.find({}, {}, query)
+    const userVideo = await UserVideo.find({}, {}, query).sort({active_at:-1})
       .populate("user", "_id -password -roles")
       .populate("count", "-_id ")
       .populate("category", "_id title")

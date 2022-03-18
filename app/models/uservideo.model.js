@@ -12,6 +12,10 @@ const UserVideo = mongoose.model(
     location: String,
     soundId: { type: Schema.Types.ObjectId, ref: 'Sound' },
     is_active: { type: Boolean, default: false },
+    active_at : {
+      type : Date,
+      default : Date.now()
+  },
     is_deleted: { type: Boolean, default: false },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     count: { type: Schema.Types.ObjectId, ref: 'VideoCount' },
