@@ -148,7 +148,7 @@ sound.uploadSound
 app.get("/fetchSound",   [authJwt.verifyToken],  sound.fetchSound);
 
 app.get("/follow/:follower/:followed", user_action.follow);
-app.get("/unfollow/:follower/:followed", user_action.unfollow);
+// app.get("/unfollow/:follower/:followed", user_action.unfollow);
 
 app.post(
   "/creatCategory",
