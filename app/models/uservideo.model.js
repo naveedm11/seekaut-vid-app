@@ -6,6 +6,7 @@ const UserVideo = mongoose.model(
   new Schema({
     videoUrl: String,
     videoName: String,
+    videoTopic: String,
     thumbnailUrl : String,
     allow_comments: { type: Boolean, default: false },
     description: String,
