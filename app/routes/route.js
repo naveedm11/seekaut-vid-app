@@ -68,6 +68,10 @@ app.post("/comment",
 upload.single("media"),
 videoCountController.comment);
 
+
+app.get("/get_comment/:video_id", videoCountController.fetchComment);
+
+
 app.get(
   "/admin",
   [authJwt.verifyToken, authJwt.isAdmin],

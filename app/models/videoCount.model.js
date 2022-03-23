@@ -10,7 +10,7 @@ const VideoCount = mongoose.model(
         comments: [{
             user: { type: Schema.Types.ObjectId, ref: 'User' },
             comment: String,
-            media : String
+            media : {type: String, default: ""},
         }],
         is_active: { type: Boolean, default: false },
         is_deleted: { type: Boolean, default: false },

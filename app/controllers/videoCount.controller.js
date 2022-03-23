@@ -156,3 +156,22 @@ else {
 
 }
 }
+
+exports.fetchComment = async (req, res) => {
+    try {
+      const video_id = req.params.video_id;
+      const data = await VideoCount.find({ video: video_id });
+      console.log(data[0]);
+
+      res.status(200).send({
+        status: "success",
+        message: "comments fetched",
+        comments_count: data[0].commentCount,
+        comments: data[0].comments,
+      });
+  
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ status: "failed", message: error });
+    }
+  };
