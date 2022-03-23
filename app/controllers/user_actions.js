@@ -36,7 +36,7 @@ exports.follow = async (req, res) => {
                         new: true
                     });
             
-              res.status(200).send({ success: true , message: "unfollowed successfully"});
+              res.status(200).send({ success: true , message: "unfollowed successfully", follow: 0});
         }
 
         else{
@@ -62,7 +62,7 @@ exports.follow = async (req, res) => {
                 new: true
             });
     
-      res.status(200).send({ success: true , message: "followeed successfully"});
+      res.status(200).send({ success: true , message: "followed successfully", follow: 1});
     } 
 }
     catch (err) {
