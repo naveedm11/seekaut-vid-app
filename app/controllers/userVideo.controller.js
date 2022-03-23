@@ -82,7 +82,7 @@ exports.upload = async (req, res) => {
             location: req.body.location,
             videoUrl: user_video.videoUrl,
             videoName: user_video.videoName,
-            videoTopic: req.body.topic,
+            videoTopic: req.body.videoTopic,
             tags: req.body.tags,
             category : req.body.category,
             soundId: req.body.soundId,
