@@ -189,17 +189,11 @@ exports.fetchAllVideo = async (req, res) => {
     
     for(let item of userVideo)
     {
-      console.log("item==>", item);
-        let uploader_id =  String(item.user._id);
-       
-        const uploader = await User.findOne({uploader_id})
-
-        const index_of_follower = uploader.followed_by.indexOf(user_id);
+          const index_of_follower = item.user.followed_by.indexOf(user_id);
         const is_following = index_of_follower !== -1;
         
-        console.log("index==>", index_of_follower);
-
         console.log("is following==>", is_following);
+
         if(is_following){
           item.status = 1;
         }
