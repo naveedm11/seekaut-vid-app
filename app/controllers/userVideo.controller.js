@@ -241,14 +241,6 @@ exports.deleteVideo = async (req, res) => {
       .status(200)
       .send({ status: "success", message: "delete Video", data: userVideo });
 
-    // let params = fetchParams;
-    // params.Key = userVideo.videoName;
-    // s3Client.getObject(params, function (err, data) {
-    //   if (err) {
-    //     res.status(500).json({ error: "Error -> " + err });
-    //   } else
-    //   res.status(200).send({ status: "success", message: "video fetched", video_Url: userVideo.videoUrl, userInfo: userVideo.user, counts: userVideo.count });
-    // });
   } catch (error) {
     console.log(error);
     res.status(500).send({ status: "failed", message: error });
@@ -317,7 +309,6 @@ exports.SearchVideobyCategory = async (req, res) => {
     res.status(500).send({ status: "failed", message: error });
   }
 };
-
 
 exports.SearchVideobyUser = async (req, res) => {
   try {
