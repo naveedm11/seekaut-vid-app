@@ -189,7 +189,7 @@ exports.fetchAllVideo = async (req, res) => {
     
     for(let item of userVideo)
     {
-          const index_of_follower = item.user.followed_by.indexOf(user_id);
+        const index_of_follower = item.user.followed_by.indexOf(user_id);
         const is_following = index_of_follower !== -1;
         
         console.log("is following==>", is_following);
@@ -259,7 +259,6 @@ exports.SearchVideobyTag = async (req, res) => {
   try {
     const tag = req.body.tag;
     const userVideo = await UserVideo.find({ tags: { $in: [tag] } });
-    console.log(userVideo);
     if (!userVideo.length > 0) {
       return res
         .status(404)
@@ -271,6 +270,47 @@ exports.SearchVideobyTag = async (req, res) => {
       data: userVideo,
     });
 
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ status: "failed", message: error });
+  }
+};
+
+exports.SearchVideobyTopic = async (req, res) => {
+  try {
+    const topic = req.body.topic;
+    const userVideo = await UserVideo.find({ videoTopic: topic });
+    if (!userVideo.length > 0) {
+      return res
+        .status(404)
+        .send({ status: "Failed", message: "Video Not Found" });
+    }
+    res.status(200).send({
+      status: "success",
+      message: "video fetched",
+      data: userVideo,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ status: "failed", message: error });
+  }
+};
+
+exports.SearchVideobyCategory = async (req, res) => {
+  try {
+    const cat = req.body.category;
+    const userVideo = await UserVideo.find({ category: cat });
+    if (!userVideo.length > 0) {
+      return res
+        .status(404)
+        .send({ status: "Failed", message: "Video Not Found" });
+    }
+    res.status(200).send({
+      status: "success",
+      message: "video fetched",
+      data: userVideo,
+    });
 
   } catch (error) {
     console.log(error);
@@ -279,11 +319,11 @@ exports.SearchVideobyTag = async (req, res) => {
 };
 
 
-exports.SearchVideobyCategory = async (req, res) => {
+exports.SearchVideobyUser = async (req, res) => {
   try {
-    const cat = req.body.category;
-    const userVideo = await UserVideo.find({ category: cat });
-    console.log(userVideo);
+    const user_id = req.body.user_id;
+
+    const userVideo = await UserVideo.find({ 'user._id' : user_id  });
     if (!userVideo.length > 0) {
       return res
         .status(404)

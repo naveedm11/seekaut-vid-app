@@ -42,9 +42,15 @@ app.get("/fetchAll", userVideoController.fetchAllVideo);
 app.delete("/deleteVideo/:id",[authJwt.verifyToken],userVideoController.deleteVideo );
 
 app.post(
-  "/searchVideoByTag",
-  [authJwt.verifyToken],
-  userVideoController.SearchVideobyTag
+  "/searchVideoByUser",
+  // [authJwt.verifyToken],
+  userVideoController.SearchVideobyUser
+);
+
+app.post(
+  "/searchVideoByTopic",
+  // [authJwt.verifyToken],
+  userVideoController.SearchVideobyTopic
 );
 
 app.post(
