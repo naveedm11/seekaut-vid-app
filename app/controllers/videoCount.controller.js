@@ -40,7 +40,6 @@ exports.like = async(req, res) => {
         res.status(404).send({ success: false, message: 'Video Not Found' })
     }
     
-    console.log("dfghjk");
     let user_id = req.params.user_id;
     if (!user_id) {
         res.status(400).send({ success: false , message: "please provide the user id" })
