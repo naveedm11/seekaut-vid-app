@@ -15,6 +15,8 @@ const UserSchema = mongoose.Schema({
     gender: {type: String, default : ""},
     dob: {type: String, default : ""},
     nationality: {type: String, default : ""},
+    location: {type: String, default : ""},
+    bio : {type: String, default : ""},
     profilePic: {type: String},
     username:{type: String},
     password: { type: String,
