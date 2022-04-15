@@ -1,4 +1,5 @@
 const config = require("../config/auth.config");
+const UserVideo = require("../models/uservideo.model");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
@@ -295,8 +296,9 @@ if(req.body.onlyCheckMobile && req.body.onlyCheckMobile == true){
 
 exports.getProfile = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id })
-   
-  res.status(200).send({ success: true , user: user});
+  const userVideo = await UserVideo.find({ 'user' : req.params.id  });
+
+  res.status(200).send({ success: true , user: user, userVideos : userVideo});
 };
 
 exports.editProfile = async (req, res) => {

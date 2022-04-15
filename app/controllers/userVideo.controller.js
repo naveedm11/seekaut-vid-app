@@ -314,7 +314,7 @@ exports.SearchVideobyUser = async (req, res) => {
   try {
     const user_id = req.body.user_id;
 
-    const userVideo = await UserVideo.find({ 'user._id' : user_id  });
+    const userVideo = await UserVideo.find({ 'user' : user_id });
     if (!userVideo.length > 0) {
       return res
         .status(404)
