@@ -28,6 +28,7 @@ const UserSchema = mongoose.Schema({
     followed_by:[],
     followers_count: Number, 
     following_count : Number,
+    likes_count : Number,
     following: [],
     is_deleted:  { type: Boolean, default: false },
     roles: [
