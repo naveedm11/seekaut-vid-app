@@ -26,6 +26,8 @@ const UserSchema = mongoose.Schema({
     is_verified:  { type: Boolean, default: false },
     social_links:[],
     followed_by:[],
+    followers_count: Number, 
+    following_count : Number,
     following: [],
     is_deleted:  { type: Boolean, default: false },
     roles: [

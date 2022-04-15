@@ -298,6 +298,8 @@ exports.getProfile = async (req, res) => {
   const user = await User.findOne({ _id: req.params.id })
   const userVideo = await UserVideo.find({ 'user' : req.params.id  });
 
+  user.followers_count = user.followed_by.length;
+  user.following_count = user.following.length;
   res.status(200).send({ success: true , user: user, userVideos : userVideo});
 };
 
