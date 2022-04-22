@@ -59,7 +59,7 @@ exports.uploadSound = async(req, res) => {
 }
 };
 
-  exports.fetchSound = async (req, res) => {
+exports.fetchSound = async (req, res) => {
     try {
       const sound = await Sound.find({})
        
