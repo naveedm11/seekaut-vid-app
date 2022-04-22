@@ -19,15 +19,6 @@ app.get("/all", userController.allAccess);
 
 app.get("/user", [authJwt.verifyToken], userController.userBoard);
 
-//upload and fetch video routes
-
-// app.post(
-//   "/upload",
-//   // [authJwt.verifyToken],
-//   upload.single("video"),
-//   userVideoController.upload
-// );
-
 app.post('/upload',
          upload.fields([{
            name: 'video', maxCount: 1

@@ -293,6 +293,7 @@ exports.getProfile = async (req, res) => {
   for(i of userVideo){
     likes = likes + i.count.likesCount;
   }
+  
   user.likes_count = likes;
   user.followers_count = user.followed_by.length;
   user.following_count = user.following.length;
