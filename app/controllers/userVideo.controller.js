@@ -306,7 +306,7 @@ exports.SearchVideobyUser = async (req, res) => {
     const userVideo = await UserVideo.find({'user' : user_id }, {}, query).sort({active_at:-1})
       .populate("user", "_id -password -roles")
       .populate("count", "-_id ")
-      // .populate("category", "_id title")
+      .populate("category", "_id title")
       .populate("soundId");
 
     if (!userVideo) {
