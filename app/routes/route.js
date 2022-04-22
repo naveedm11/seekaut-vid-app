@@ -32,11 +32,11 @@ app.get("/fetch/:id",
 app.get("/fetchAll", userVideoController.fetchAllVideo);
 app.delete("/deleteVideo/:id",[authJwt.verifyToken],userVideoController.deleteVideo );
 
-app.get(
-  "/searchVideoByUser",
-  // [authJwt.verifyToken],
-  userVideoController.SearchVideobyUser
-);
+// app.get(
+//   "/searchVideoByUser",
+//   // [authJwt.verifyToken],
+//   userVideoController.SearchVideobyUser
+// );
 
 app.post(
   "/searchVideoByTopic",
