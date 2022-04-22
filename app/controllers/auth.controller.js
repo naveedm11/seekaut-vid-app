@@ -296,7 +296,7 @@ exports.getProfile = async (req, res) => {
   user.likes_count = likes;
   user.followers_count = user.followed_by.length;
   user.following_count = user.following.length;
-  res.status(200).send({ success: true , user: user});
+  res.status(200).send({ user: user});
 };
 
 exports.editProfilePic = async (req, res) => {
