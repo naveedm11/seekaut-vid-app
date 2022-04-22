@@ -6,7 +6,6 @@ const ObjectId = require('mongodb').ObjectId;
 exports.follow = async (req, res) => {
 
     try {
-
         const user = await User.findOne({ _id: req.params.follower })
 
         const index_of_like = user.following.indexOf(ObjectId(req.params.followed));

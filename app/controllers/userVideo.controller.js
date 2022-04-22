@@ -182,8 +182,6 @@ exports.fetchAllVideo = async (req, res) => {
         const index_of_follower = item.user.followed_by.indexOf(user_id);
         const is_following = index_of_follower !== -1;
         
-        console.log("is following==>", is_following);
-
         if(is_following){
           item.status = 1;
         }
@@ -290,28 +288,6 @@ exports.SearchVideobyCategory = async (req, res) => {
   }
 };
 
-// exports.SearchVideobyUser = async (req, res) => {
-//   try {
-//     const user_id = req.body.user_id;
-
-//     const userVideo = await UserVideo.find({ 'user' : user_id });
-//     if (!userVideo.length > 0) {
-//       return res
-//         .status(404)
-//         .send({ status: "Failed", message: "Video Not Found" });
-//     }
-//     res.status(200).send({
-//       status: "success",
-//       message: "video fetched",
-//       data: userVideo,
-//     });
-
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({ status: "failed", message: error });
-//   }
-// };
-
 exports.SearchVideobyUser = async (req, res) => {
   try {
 
@@ -344,8 +320,6 @@ exports.SearchVideobyUser = async (req, res) => {
         const index_of_follower = item.user.followed_by.indexOf(user_id);
         const is_following = index_of_follower !== -1;
         
-        console.log("is following==>", is_following);
-
         if(is_following){
           item.status = 1;
         }
