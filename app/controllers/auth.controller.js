@@ -103,12 +103,6 @@ exports.signin = async (req, res) => {
   if(req.body.phone){
     user = await User.findOne({ phone: req.body.phone })
   }
-    // .populate("roles", "-__v")
-    // .exec((err, user) => {
-    //   if (err) {
-    //     res.status(500).send({ message: err });
-    //     return;
-    //   }
 
       if (!user) {
         return res.status(404).send({ success: false, message: "User Not found." });
@@ -149,10 +143,8 @@ exports.signin = async (req, res) => {
 //update user
 exports.updateUser = async (req, res) => {
   
-  console.log("body==>", req.body);
   if (req.files) {
     try {
-      console.log("file is uploaded");
       let params = uploadParams;
 
       params.Key = Date.now() + "--" + req.file.originalname;
@@ -290,9 +282,6 @@ if(req.body.onlyCheckMobile && req.body.onlyCheckMobile == true){
     catch (err) {
       return res.status(500).json(err);
     }
-  // } else {
-  //   return res.status(403).json("You can update only your account!");
-  // }
 }
 
 exports.getProfile = async (req, res) => {

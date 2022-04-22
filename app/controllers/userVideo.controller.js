@@ -157,8 +157,6 @@ exports.fetchAllVideo = async (req, res) => {
     var size = parseInt(req.query.size)
     var user_id = String(req.query.user_id)
 
-    // const user = await User.findOne({user_id});
-
     var query = {}
     if (page < 0 || page === 0) {
       response = { "error": true, "message": "invalid page number, should start with 1" };
