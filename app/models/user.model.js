@@ -10,7 +10,7 @@ const UserSchema = mongoose.Schema({
       minlength: 1,
       unique: true,
      },
-     
+    public_or_private: Boolean,
     phone: {type: String, unique: true},
     gender: {type: String, default : ""},
     dob: {type: String, default : ""},
@@ -28,6 +28,7 @@ const UserSchema = mongoose.Schema({
     followed_by:[],
     followers_count: Number, 
     following_count : Number,
+    favourites: [],
     likes_count : Number,
     following: [],
     is_deleted:  { type: Boolean, default: false },

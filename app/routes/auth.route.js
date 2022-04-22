@@ -13,7 +13,12 @@ app.post(
 
 app.post("/signin", controller.signin);
 
-app.post("/update/:id", controller.updateUser);
+app.post("/update/:id", 
+controller.updateUser);
+
+app.post("/editProfilePic/:id", 
+upload.single("dp"),controller.editProfilePic);
+
 
 app.get("/getProfile/:id", controller.getProfile);
 

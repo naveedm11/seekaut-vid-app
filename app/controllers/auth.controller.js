@@ -18,13 +18,14 @@ const s3Client = new S3({
   secretAccessKey,
 });
 const BUCKET_NAME = "seekaut";
+
 const uploadParams = {
   Bucket: BUCKET_NAME,
   Key: "", // pass key
   Body: null, // pass file body
 };
 
-const fetchParams = {
+const mediaParams = {
   Bucket: BUCKET_NAME,
   Key: "", //pass key
 };
@@ -306,18 +307,36 @@ exports.getProfile = async (req, res) => {
   user.likes_count = likes;
   user.followers_count = user.followed_by.length;
   user.following_count = user.following.length;
-  res.status(200).send({ success: true , user: user, userVideos : userVideo});
+  res.status(200).send({ success: true , user: user});
 };
 
-exports.editProfile = async (req, res) => {
+exports.editProfilePic = async (req, res) => {
   
+  if (req.file) {
     try {
-      const user = await User.findOneAndUpdate({ _id: ObjectId(req.params.id)}, {$set: req.body});
+      let media_params = mediaParams;
 
-      res.status(200).send({ success: true , message: "User is updated successfully!"});
-    } 
-    catch (err) {
-      return res.status(500).json(err);
-    }
+      const _media = req.file;
+
+      media_params.Key = Date.now() + "--" + _media.originalname;
+      media_params.Body = _media.buffer;
+      
+      s3Client.upload(media_params, async (err, data) => {
+        if (err) {
+          res.status(500).json({ error: "Error -> " + err });
+        }
+
+        let dp = data.Location;
+
+        const user = await User.findOneAndUpdate({ _id: ObjectId(req.params.id)}, { $set : { profilePic : dp } }, {new : true});
+        
+         res.status(201).send({ success: true })
+      });
+} 
+catch (error) {
+console.log(error);
+res.status(500).send({ error })
+}
+}
  
 }

@@ -144,14 +144,6 @@ exports.fetchVideo = async (req, res) => {
       .status(200)
       .send({ status: "success", message: "video fetched", data: userVideo });
 
-    // let params = fetchParams;
-    // params.Key = userVideo.videoName;
-    // s3Client.getObject(params, function (err, data) {
-    //   if (err) {
-    //     res.status(500).json({ error: "Error -> " + err });
-    //   } else
-    //   res.status(200).send({ status: "success", message: "video fetched", video_Url: userVideo.videoUrl, userInfo: userVideo.user, counts: userVideo.count });
-    // });
   } catch (error) {
     console.log(error);
     res.status(500).send({ status: "failed", message: error });
@@ -210,16 +202,6 @@ exports.fetchAllVideo = async (req, res) => {
       data: userVideo,
     });
 
-    // let params = fetchParams
-    // params.Key = userVideo.videoName
-    // s3Client.getObject(params, function (err, data) {
-    //     if (err) {
-    //         res.status(500).json({ error: "Error -> " + err });
-    //     }
-    //     else
-    //         res.status(200).send({ status: "success", message: "video fetched", video_Url: userVideo.videoUrl, userInfo: userVideo.user, counts: userVideo.count })
-
-    // });
   } catch (error) {
     console.log(error);
     res.status(500).send({ status: "failed", message: error });
@@ -310,19 +292,75 @@ exports.SearchVideobyCategory = async (req, res) => {
   }
 };
 
+// exports.SearchVideobyUser = async (req, res) => {
+//   try {
+//     const user_id = req.body.user_id;
+
+//     const userVideo = await UserVideo.find({ 'user' : user_id });
+//     if (!userVideo.length > 0) {
+//       return res
+//         .status(404)
+//         .send({ status: "Failed", message: "Video Not Found" });
+//     }
+//     res.status(200).send({
+//       status: "success",
+//       message: "video fetched",
+//       data: userVideo,
+//     });
+
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({ status: "failed", message: error });
+//   }
+// };
+
 exports.SearchVideobyUser = async (req, res) => {
   try {
-    const user_id = req.body.user_id;
 
-    const userVideo = await UserVideo.find({ 'user' : user_id });
-    if (!userVideo.length > 0) {
+    var page = parseInt(req.query.page)
+    var size = parseInt(req.query.size)
+    var user_id = String(req.query.user_id)
+
+    var query = {}
+    if (page < 0 || page === 0) {
+      response = { "error": true, "message": "invalid page number, should start with 1" };
+      return res.json(response)
+    }
+    query.skip = size * (page - 1)
+    query.limit = size
+
+    const userVideo = await UserVideo.find({'user' : user_id }, {}, query).sort({active_at:-1})
+      .populate("user", "_id -password -roles")
+      .populate("count", "-_id ")
+      .populate("category", "_id title")
+      .populate("soundId");
+
+    if (!userVideo) {
       return res
         .status(404)
         .send({ status: "Failed", message: "Video Not Found" });
     }
+    
+    for(let item of userVideo)
+    {
+        const index_of_follower = item.user.followed_by.indexOf(user_id);
+        const is_following = index_of_follower !== -1;
+        
+        console.log("is following==>", is_following);
+
+        if(is_following){
+          item.status = 1;
+        }
+        else {
+          item.status = 0;
+        }
+      }
+
     res.status(200).send({
       status: "success",
       message: "video fetched",
+      page,
+      size,
       data: userVideo,
     });
 
