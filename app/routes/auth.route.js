@@ -19,7 +19,6 @@ controller.updateUser);
 app.post("/editProfilePic/:id", 
 upload.single("dp"),controller.editProfilePic);
 
-
 app.get("/getProfile/:id", controller.getProfile);
 
 module.exports = app;
